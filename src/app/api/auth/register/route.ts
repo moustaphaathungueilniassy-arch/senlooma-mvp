@@ -88,8 +88,8 @@ export async function POST(request: Request) {
     }
 
     // 2. Générer l'OTP et simuler l'envoi
-    if (user.phone) {
-      generateOTP(user.phone);
+    if (user.email) {
+      generateOTP(user.email);
     }
 
     // Enlever le hash du mot de passe de la réponse

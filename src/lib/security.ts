@@ -36,33 +36,35 @@ export function getClientIp(req: Request): string {
 // Cache global pour la simulation OTP
 const otpCache = new Map<string, { code: string; expiresAt: number }>();
 
-export function generateOTP(phone: string): string {
+export function generateOTP(identifier: string): string {
   const code = Math.floor(1000 + Math.random() * 9000).toString();
-  otpCache.set(phone, {
+  otpCache.set(identifier, {
     code,
     expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
   });
   
-  // Simulation d'envoi SMS
+  // Simulation d'envoi Email
   console.log('\n=========================================');
-  console.log(`[SIMULATION SMS] Envoyer au ${phone}`);
+  console.log(`[SIMULATION EMAIL] Envoyer à ${identifier}`);
   console.log(`Votre code de vérification SAMA-DARAAL est : ${code}`);
   console.log('=========================================\n');
+  
+  require('fs').writeFileSync('CODE_OTP_POUR_TEST.txt', `Le code Email (OTP) généré pour ${identifier} est : ${code}`);
   
   return code;
 }
 
-export function verifyOTP(phone: string, code: string): boolean {
-  const record = otpCache.get(phone);
+export function verifyOTP(identifier: string, code: string): boolean {
+  const record = otpCache.get(identifier);
   if (!record) return false;
   
   if (Date.now() > record.expiresAt) {
-    otpCache.delete(phone);
+    otpCache.delete(identifier);
     return false;
   }
   
   if (record.code === code) {
-    otpCache.delete(phone);
+    otpCache.delete(identifier);
     return true;
   }
   

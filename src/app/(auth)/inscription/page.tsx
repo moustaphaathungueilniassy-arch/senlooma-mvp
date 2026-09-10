@@ -84,7 +84,7 @@ function InscriptionForm() {
       const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: formData.phone, code: otpCode }),
+        body: JSON.stringify({ email: formData.email, code: otpCode }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Code invalide');
@@ -175,12 +175,12 @@ function InscriptionForm() {
       {showOtp ? (
         <form onSubmit={handleVerifyOtp} className="space-y-6">
           <div className="bg-white/10 p-6 rounded-lg text-center border border-white/20">
-            <h2 className="text-xl font-bold text-white mb-2">Vérification par SMS</h2>
+            <h2 className="text-xl font-bold text-white mb-2">Vérification par e-mail</h2>
             <p className="text-white/80 text-sm mb-6">
-              Pour des raisons de sécurité, veuillez entrer le code à 4 chiffres qui vient d'être envoyé au <b>{formData.phone}</b>.
+              Pour des raisons de sécurité, veuillez entrer le code à 4 chiffres qui vient d'être envoyé à l'adresse <b>{formData.email}</b>.
             </p>
             <p className="text-xs text-[#D4A843] mb-4 bg-[#D4A843]/10 p-2 rounded">
-              <i>(Mode démo : Regardez dans le terminal de développement de votre éditeur pour voir le code !)</i>
+              <i>(Mode démo : Regardez dans le fichier CODE_OTP_POUR_TEST.txt pour voir le code !)</i>
             </p>
             
             <input

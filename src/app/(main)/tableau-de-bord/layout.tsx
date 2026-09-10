@@ -2,19 +2,42 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, MessageSquare, User, CreditCard, Settings } from 'lucide-react';
-
-const navigation = [
-  { name: 'Tableau de bord', href: '/tableau-de-bord', icon: LayoutDashboard },
-  { name: 'Mes Annonces', href: '/tableau-de-bord/annonces', icon: FileText },
-  { name: 'Messages', href: '/tableau-de-bord/messages', icon: MessageSquare },
-  { name: 'Mon Profil', href: '/tableau-de-bord/profil', icon: User },
-  { name: 'Abonnement', href: '/abonnement', icon: CreditCard },
-  { name: 'Paramètres', href: '/tableau-de-bord/parametres', icon: Settings },
-];
+import { useSession } from 'next-auth/react';
+import { LayoutDashboard, FileText, MessageSquare, User, CreditCard, Settings, Heart, ShoppingBag } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const role = (session?.user as any)?.role || 'ACHETEUR';
+
+  const getNavigation = () => {
+    const baseNav = [
+      { name: 'Tableau de bord', href: '/tableau-de-bord', icon: LayoutDashboard },
+    ];
+
+    if (role === 'ELEVEUR') {
+      baseNav.push(
+        { name: 'Mes Annonces', href: '/tableau-de-bord/annonces', icon: FileText },
+        { name: 'Abonnement', href: '/abonnement', icon: CreditCard }
+      );
+    } else {
+      // Pour les Acheteurs
+      baseNav.push(
+        { name: 'Mes Achats', href: '/tableau-de-bord/achats', icon: ShoppingBag },
+        { name: 'Mes Favoris', href: '/tableau-de-bord/favoris', icon: Heart }
+      );
+    }
+
+    baseNav.push(
+      { name: 'Messages', href: '/tableau-de-bord/messages', icon: MessageSquare },
+      { name: 'Mon Profil', href: '/tableau-de-bord/profil', icon: User },
+      { name: 'Paramètres', href: '/tableau-de-bord/parametres', icon: Settings }
+    );
+
+    return baseNav;
+  };
+
+  const navigation = getNavigation();
 
   return (
     <div className="min-h-screen bg-[#FAFAF5] flex flex-col lg:flex-row">

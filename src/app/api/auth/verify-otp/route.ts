@@ -5,13 +5,13 @@ import { verifyOTP } from '@/lib/security';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { phone, code } = body;
+    const { email, code } = body;
 
-    if (!phone || !code) {
-      return NextResponse.json({ error: 'Numéro de téléphone ou code manquant.' }, { status: 400 });
+    if (!email || !code) {
+      return NextResponse.json({ error: 'Adresse e-mail ou code manquant.' }, { status: 400 });
     }
 
-    const isValid = verifyOTP(phone, code);
+    const isValid = verifyOTP(email, code);
     
     if (!isValid) {
       return NextResponse.json({ error: 'Code incorrect ou expiré.' }, { status: 400 });
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
     // Le code est bon, on met à jour le statut "verified"
     await prisma.user.update({
-      where: { phone },
+      where: { email },
       data: { verified: true }
     });
 

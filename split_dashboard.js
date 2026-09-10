@@ -1,60 +1,13 @@
-import { auth } from '@/lib/auth';
-import prisma from '@/lib/prisma';
-import { redirect } from 'next/navigation';
-import { FileText, Eye, MessageSquare, Star, CheckCircle, Clock, Search, PlusCircle } from 'lucide-react';
-import Link from 'next/link';
+const fs = require('fs');
+const file = 'src/app/(main)/tableau-de-bord/page.tsx';
+let c = fs.readFileSync(file, 'utf8');
 
-export default async function TableauDeBordPage() {
-  const session = await auth();
-  if (!session?.user) {
-    redirect('/connexion');
-  }
+c = c.replace(/const userId = session\.user\.id;/,
+`const userId = session.user.id;
+  const role = (session.user as any).role || 'ACHETEUR';`);
 
-  const userId = session.user.id;
-  const role = (session.user as any).role || 'ACHETEUR';
-
-  // Récupérer les vraies annonces de l'utilisateur
-  const annonces = await prisma.listing.findMany({
-    where: { userId },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      category: true,
-      _count: {
-        select: { conversations: true }
-      }
-    }
-  });
-
-  // Calculer les statistiques
-  const activeAnnonces = annonces.filter((a: any) => a.status === 'ACTIVE');
-  
-  // Expiration logique (15 jours)
-  const fifteenDaysAgo = new Date();
-  fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-
-  const stats = {
-    annoncesTotal: annonces.length,
-    annoncesActives: activeAnnonces.filter((a: any) => a.createdAt >= fifteenDaysAgo).length,
-    messages: annonces.reduce((acc: number, a: any) => acc + a._count.conversations, 0),
-    vues: 0, 
-    note: "N/A"
-  };
-
-  const getStatusBadge = (annonce: any) => {
-    if (annonce.status === 'VENDU') return <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">Vendu</span>;
-    if (annonce.createdAt < fifteenDaysAgo) return <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">Expiré</span>;
-    return <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Actif</span>;
-  };
-
-  const getDaysLeft = (createdAt: Date) => {
-    const expireDate = new Date(createdAt);
-    expireDate.setDate(expireDate.getDate() + 15);
-    const diffTime = expireDate.getTime() - new Date().getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 0;
-  };
-
-  if (role === 'ACHETEUR') {
+c = c.replace(/return \(\s*<div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">[\s\S]*?<\/div>\n    <\/div>\n  \);\n}/,
+`if (role === 'ACHETEUR') {
     return (
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         <h1 className="text-3xl font-bold text-[#2D6A4F]">Mon Espace Client</h1>
@@ -218,7 +171,7 @@ export default async function TableauDeBordPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Link href={`/annonces/${annonce.id}`} className="text-[#2D6A4F] hover:text-[#1B4332] mr-4">
+                          <Link href={\`/annonces/\${annonce.id}\`} className="text-[#2D6A4F] hover:text-[#1B4332] mr-4">
                             Voir
                           </Link>
                           <button className="text-[#D4A843] hover:text-[#8B6914]">
@@ -236,4 +189,6 @@ export default async function TableauDeBordPage() {
       </div>
     </div>
   );
-}
+}`);
+
+fs.writeFileSync(file, c);
