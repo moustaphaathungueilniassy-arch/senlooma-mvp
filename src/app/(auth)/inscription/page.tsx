@@ -9,7 +9,7 @@ import { registerSchema } from '@/lib/validators';
 function InscriptionForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialRole = searchParams.get('role');
+  const initialRole = searchParams?.get('role');
   
   const [role, setRole] = useState<'ACHETEUR' | 'ELEVEUR' | ''>(
     initialRole === 'eleveur' ? 'ELEVEUR' : initialRole === 'client' ? 'ACHETEUR' : ''

@@ -17,8 +17,8 @@ function ConnexionForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const isRegistered = searchParams.get('registered') === 'true';
-  const hasPromo = searchParams.get('promo') === 'true';
+  const isRegistered = searchParams?.get('registered') === 'true';
+  const hasPromo = searchParams?.get('promo') === 'true';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

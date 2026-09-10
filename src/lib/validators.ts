@@ -69,10 +69,10 @@ export const listingSchema = z.object({
     .min(1, 'Veuillez préciser la race de l\'animal')
     .max(50, 'La race ne peut pas dépasser 50 caractères'),
   age: z
-    .number({ invalid_type_error: 'Veuillez entrer l\'âge de l\'animal' })
+    .number()
     .min(0, 'L\'âge ne peut pas être négatif'),
   weight: z
-    .number({ invalid_type_error: 'Veuillez entrer le poids de l\'animal' })
+    .number()
     .min(1, 'Le poids doit être supérieur à 0 kg'),
   sex: z
     .enum(['MALE', 'FEMELLE'])

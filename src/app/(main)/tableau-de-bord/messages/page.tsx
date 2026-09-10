@@ -33,8 +33,8 @@ import { useSearchParams } from 'next/navigation';
 export default function MessagesPage() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const targetUserId = searchParams.get('user');
-  const targetListingId = searchParams.get('listing');
+  const targetUserId = searchParams?.get('user');
+  const targetListingId = searchParams?.get('listing');
   
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
