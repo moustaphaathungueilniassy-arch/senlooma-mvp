@@ -29,8 +29,8 @@ interface Conversation {
   lastMessageAt: string;
 }
 import { useSearchParams } from 'next/navigation';
-
-export default function MessagesPage() {
+import React, { Suspense } from 'react';
+function MessagesContent() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const targetUserId = searchParams?.get('user');
@@ -307,5 +307,14 @@ export default function MessagesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-8"><div className="w-8 h-8 border-4 border-[#2D6A4F] border-t-transparent rounded-full animate-spin"></div></div>}>
+      <MessagesContent />
+    </Suspense>
   );
 }
