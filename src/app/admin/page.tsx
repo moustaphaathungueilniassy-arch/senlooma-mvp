@@ -2,6 +2,8 @@ import prisma from '@/lib/prisma';
 import { Users, FileText, CheckCircle, Clock } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
   // Récupérer les statistiques
   const totalUsers = await prisma.user.count();
