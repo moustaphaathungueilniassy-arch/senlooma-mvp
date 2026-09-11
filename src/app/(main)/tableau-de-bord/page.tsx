@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { FileText, Eye, MessageSquare, Star, CheckCircle, Clock, Search, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
+import AnnonceActions from '@/components/dashboard/AnnonceActions';
 
 export default async function TableauDeBordPage() {
   const session = await auth();
@@ -218,12 +219,7 @@ export default async function TableauDeBordPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Link href={`/annonces/${annonce.id}`} className="text-[#2D6A4F] hover:text-[#1B4332] mr-4">
-                            Voir
-                          </Link>
-                          <button className="text-[#D4A843] hover:text-[#8B6914]">
-                            Modifier
-                          </button>
+                          <AnnonceActions annonceId={annonce.id} currentStatus={annonce.status} />
                         </td>
                       </tr>
                     ))

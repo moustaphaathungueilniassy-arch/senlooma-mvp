@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { FileText, Plus } from 'lucide-react';
 import { formatRelativeDate, formatPrice } from '@/lib/utils';
+import AnnonceActions from '@/components/dashboard/AnnonceActions';
 
 export default async function MesAnnoncesPage() {
   const session = await auth();
@@ -24,8 +25,8 @@ export default async function MesAnnoncesPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-          <FileText className="mr-3 text-[#2D6A4F]" />
+        <h1 className="text-2xl font-bold text-white flex items-center">
+          <FileText className="mr-3 text-white" />
           Mes Annonces
         </h1>
         <Link 
@@ -100,12 +101,7 @@ export default async function MesAnnoncesPage() {
                       {formatRelativeDate(annonce.createdAt)}
                     </td>
                     <td className="p-4">
-                      <Link 
-                        href={`/annonces/${annonce.id}`}
-                        className="text-[#2D6A4F] hover:underline text-sm font-medium"
-                      >
-                        Voir public
-                      </Link>
+                      <AnnonceActions annonceId={annonce.id} currentStatus={annonce.status} />
                     </td>
                   </tr>
                 ))}

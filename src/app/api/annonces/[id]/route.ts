@@ -149,11 +149,22 @@ export async function DELETE(
       );
     }
 
-    if (existingAnnonce.userId !== session.user.id && (session.user as any).role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: "Vous n'êtes pas autorisé à supprimer cette annonce" },
-        { status: 403 }
-      );
+    const userRole = (session.user as any).role;
+    const isOwner = existingAnnonce.userId === session.user.id;
+
+    // Les ACHETEUR n'ont jamais le droit de supprimer
+    if (userRole === 'ACHETEUR') {
+      return NextResponse.json({ error: "Les clients ne peuvent pas supprimer d'annonces" }, { status: 403 });
+    }
+
+    // Les ELEVEUR ne peuvent supprimer que leurs propres annonces
+    if (userRole === 'ELEVEUR' && !isOwner) {
+      return NextResponse.json({ error: "Vous ne pouvez supprimer que vos propres annonces" }, { status: 403 });
+    }
+
+    // Les ADMIN peuvent tout supprimer (aucun blocage)
+    if (!isOwner && userRole !== 'ADMIN') {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 
     await prisma.listing.delete({
