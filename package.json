@@ -28,6 +28,7 @@
     "next-auth": "^5.0.0-beta.32",
     "next-pwa": "^5.6.0",
     "prisma": "6.8.2",
+    "puppeteer": "^25.10.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "^7.87.0",
@@ -38,6 +39,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
