@@ -75,7 +75,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des annonces:', error);
-    return NextResponse.json({ error: 'Erreur serveur interne' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Erreur serveur interne' }, { status: 500 });
   }
 }
 
