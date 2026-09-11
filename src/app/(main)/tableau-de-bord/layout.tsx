@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navigation = getNavigation();
 
   return (
-    <div className="min-h-screen bg-[#FAFAF5] flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-[#2D6A4F] flex flex-col lg:flex-row">
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 shadow-sm min-h-screen sticky top-16" style={{ height: 'calc(100vh - 4rem)' }}>
         <div className="flex-1 px-4 py-8 space-y-2 overflow-y-auto">

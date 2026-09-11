@@ -57,7 +57,7 @@ export default async function TableauDeBordPage() {
   if (role === 'ACHETEUR') {
     return (
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-        <h1 className="text-3xl font-bold text-[#2D6A4F]">Mon Espace Client</h1>
+        <h1 className="text-3xl font-bold text-white">Mon Espace Client</h1>
         
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <div className="bg-white shadow rounded-xl border border-gray-100 p-5 flex items-center">
@@ -105,7 +105,7 @@ export default async function TableauDeBordPage() {
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-[#2D6A4F]">Mon Espace Éleveur</h1>
+        <h1 className="text-3xl font-bold text-white">Mon Espace Éleveur</h1>
         <Link 
           href="/annonces/nouvelle" 
           className="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#D4A843] hover:bg-[#b08b35] transition-colors"
