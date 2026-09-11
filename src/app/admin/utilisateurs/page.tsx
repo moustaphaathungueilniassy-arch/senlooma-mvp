@@ -26,8 +26,8 @@ export default async function AdminUtilisateursPage() {
     <div className="max-w-6xl mx-auto">
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestion des Utilisateurs</h1>
-          <p className="text-gray-500">Gérez tous les éleveurs, acheteurs et administrateurs.</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Gestion des Utilisateurs</h1>
+          <p className="text-white/80">Gérez tous les éleveurs, acheteurs et administrateurs.</p>
         </div>
       </div>
 
