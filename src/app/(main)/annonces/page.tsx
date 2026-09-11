@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Search, MapPin, Filter, Clock, Loader2, AlertCircle, RefreshCw, LayoutGrid, Map as MapIcon, ChevronUp, ChevronDown } from 'lucide-react';
 import { formatPrice, formatRelativeDate } from '@/lib/utils';
 import Map from '@/components/ui/Map';
+import FavoriteButton from '@/components/ui/FavoriteButton';
 
 interface Annonce {
   id: string;
@@ -274,8 +275,11 @@ function AnnoncesContent() {
                             Pas d'image
                           </div>
                         )}
-                        <div className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-semibold text-[#2D6A4F]">
-                          {annonce.category?.name || 'Inconnue'}
+                        <div className="absolute top-2 right-2 flex flex-col gap-2 items-end">
+                          <div className="bg-white/90 px-2 py-1 rounded text-xs font-semibold text-[#2D6A4F] shadow-sm">
+                            {annonce.category?.name || 'Inconnue'}
+                          </div>
+                          <FavoriteButton listingId={annonce.id} iconSize={16} className="shadow-sm" />
                         </div>
                       </div>
                       <div className="p-4">

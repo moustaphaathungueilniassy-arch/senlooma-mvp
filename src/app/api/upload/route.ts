@@ -24,15 +24,16 @@ export async function POST(request: Request) {
 
     const allowedMimeTypes = [
       'image/jpeg', 'image/png', 'image/webp', 'image/gif',
-      'audio/mpeg', 'audio/wav', 'audio/webm', 'audio/ogg'
+      'audio/mpeg', 'audio/wav', 'audio/webm', 'audio/ogg',
+      'video/mp4', 'video/webm', 'video/quicktime'
     ];
-    // Relaxed check to allow various browser audio recordings
-    if (!file.type.startsWith('image/') && !file.type.startsWith('audio/')) {
+    // Relaxed check to allow various browser audio/video recordings
+    if (!file.type.startsWith('image/') && !file.type.startsWith('audio/') && !file.type.startsWith('video/')) {
       return NextResponse.json({ error: 'Type de fichier non autorisé' }, { status: 400 });
     }
 
-    if (file.size > 10 * 1024 * 1024) { // Increased to 10MB to accommodate audio
-      return NextResponse.json({ error: 'Fichier trop volumineux (max 10 Mo)' }, { status: 400 });
+    if (file.size > 50 * 1024 * 1024) { // 50 Mo pour les vidéos
+      return NextResponse.json({ error: 'Fichier trop volumineux (max 50 Mo)' }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();

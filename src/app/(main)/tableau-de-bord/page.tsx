@@ -55,23 +55,27 @@ export default async function TableauDeBordPage() {
     return diffDays > 0 ? diffDays : 0;
   };
 
+  const favoritesCount = await prisma.favorite.count({
+    where: { userId }
+  });
+
   if (role === 'ACHETEUR') {
     return (
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         <h1 className="text-3xl font-bold text-white">Mon Espace Client</h1>
         
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="bg-white shadow rounded-xl border border-gray-100 p-5 flex items-center">
-            <div className="flex-shrink-0 bg-blue-100 p-3 rounded-xl">
-              <Eye className="h-6 w-6 text-blue-600" />
+          <Link href="/tableau-de-bord/favoris" className="bg-white shadow rounded-xl border border-gray-100 p-5 flex items-center hover:shadow-md transition-shadow group">
+            <div className="flex-shrink-0 bg-red-50 p-3 rounded-xl group-hover:bg-red-100 transition-colors">
+              <Eye className="h-6 w-6 text-red-500" />
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">Mes favoris (À venir)</dt>
-                <dd className="text-2xl font-semibold text-gray-900">0</dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Mes favoris</dt>
+                <dd className="text-2xl font-semibold text-gray-900">{favoritesCount}</dd>
               </dl>
             </div>
-          </div>
+          </Link>
           <div className="bg-white shadow rounded-xl border border-gray-100 p-5 flex items-center">
             <div className="flex-shrink-0 bg-[#D4A843] bg-opacity-20 p-3 rounded-xl">
               <MessageSquare className="h-6 w-6 text-[#8B6914]" />

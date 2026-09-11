@@ -7,6 +7,15 @@ import { MapPin, MessageCircle, Tag, Scale, Ruler, Users, ChevronLeft, Loader2, 
 import { formatPrice } from '@/lib/utils';
 import Map from '@/components/ui/Map';
 import { getCoordinatesForCity } from '@/lib/coordinates';
+import FavoriteButton from '@/components/ui/FavoriteButton';
+
+// Helper to format phone for WhatsApp (remove spaces, +)
+const formatWhatsAppNumber = (phone: string) => {
+  let cleaned = phone.replace(/\s+/g, '');
+  if (cleaned.startsWith('+')) cleaned = cleaned.substring(1);
+  // Optional: check if it needs country code, but usually users provide it
+  return cleaned;
+};
 
 interface AnnonceDetail {
   id: string;
@@ -93,27 +102,52 @@ export default function AnnonceDetailPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-gray-100 rounded-xl overflow-hidden aspect-video relative flex items-center justify-center">
             {annonce.images && annonce.images.length > 0 ? (
-              <img 
-                src={annonce.images[activeImage].url} 
-                alt={annonce.title} 
-                className="max-h-full max-w-full object-contain"
-              />
+              (() => {
+                const url = annonce.images[activeImage].url;
+                const isVideo = url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.mov') || url.includes('video/upload');
+                
+                return isVideo ? (
+                  <video 
+                    src={url} 
+                    controls 
+                    className="max-h-full max-w-full object-contain"
+                  />
+                ) : (
+                  <img 
+                    src={url} 
+                    alt={annonce.title} 
+                    className="max-h-full max-w-full object-contain"
+                  />
+                );
+              })()
             ) : (
-              <span className="text-gray-400">Aucune image</span>
+              <span className="text-gray-400">Aucun média</span>
             )}
           </div>
           
           {annonce.images && annonce.images.length > 1 && (
             <div className="flex space-x-2 overflow-x-auto pb-2">
-              {annonce.images.map((img, idx) => (
-                <button 
-                  key={img.id || idx}
-                  onClick={() => setActiveImage(idx)}
-                  className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 ${activeImage === idx ? 'border-[#2D6A4F]' : 'border-transparent'}`}
-                >
-                  <img src={img.url} alt={`Miniature ${idx}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
+              {annonce.images.map((img, idx) => {
+                const isVideo = img.url.endsWith('.mp4') || img.url.endsWith('.webm') || img.url.endsWith('.mov') || img.url.includes('video/upload');
+                return (
+                  <button 
+                    key={img.id || idx}
+                    onClick={() => setActiveImage(idx)}
+                    className={`relative flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 ${activeImage === idx ? 'border-[#2D6A4F]' : 'border-transparent'}`}
+                  >
+                    {isVideo ? (
+                      <video src={img.url} className="w-full h-full object-cover pointer-events-none" />
+                    ) : (
+                      <img src={img.url} alt={`Miniature ${idx}`} className="w-full h-full object-cover" />
+                    )}
+                    {isVideo && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <div className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center">▶</div>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           )}
 
@@ -130,11 +164,14 @@ export default function AnnonceDetailPage() {
               <span className="inline-block px-3 py-1 bg-[#2D6A4F]/10 text-[#2D6A4F] text-sm font-semibold rounded-full">
                 {annonce.category?.name || 'Inconnue'}
               </span>
-              {annonce.status !== 'ACTIVE' && (
-                <span className="inline-block px-3 py-1 bg-red-100 text-red-800 text-sm font-semibold rounded-full">
-                  {annonce.status}
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {annonce.status !== 'ACTIVE' && (
+                  <span className="inline-block px-3 py-1 bg-red-100 text-red-800 text-sm font-semibold rounded-full">
+                    {annonce.status}
+                  </span>
+                )}
+                <FavoriteButton listingId={annonce.id} iconSize={24} />
+              </div>
             </div>
 
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{annonce.title}</h1>
@@ -148,10 +185,21 @@ export default function AnnonceDetailPage() {
             </Link>
             
             {annonce.user.phone && (
-              <a href={`tel:${annonce.user.phone.replace(/\s+/g, '')}`} className="w-full py-3 px-4 bg-[#D4A843] hover:bg-[#b08b35] text-white rounded-lg font-semibold flex items-center justify-center transition-colors mb-6">
-                <Phone className="w-5 h-5 mr-2" />
-                {annonce.user.phone}
-              </a>
+              <>
+                <a 
+                  href={`https://wa.me/${formatWhatsAppNumber(annonce.user.phone)}?text=${encodeURIComponent(`Bonjour, je suis intéressé par votre annonce sur SAMA-DARAAL : ${annonce.title}`)}`} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#20b858] text-white rounded-lg font-semibold flex items-center justify-center transition-colors mb-3"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  Contacter sur WhatsApp
+                </a>
+                <a href={`tel:${annonce.user.phone.replace(/\s+/g, '')}`} className="w-full py-3 px-4 bg-[#D4A843] hover:bg-[#b08b35] text-white rounded-lg font-semibold flex items-center justify-center transition-colors mb-6">
+                  <Phone className="w-5 h-5 mr-2" />
+                  Appeler ({annonce.user.phone})
+                </a>
+              </>
             )}
 
             <div className="space-y-3">

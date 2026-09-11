@@ -91,6 +91,7 @@ model User {
   listings        Listing[]
   auctions        Auction[]
   bids            Bid[]
+  favorites       Favorite[]
   sentMessages    Message[]      @relation("UserMessages")
   reviewsGiven    Review[]       @relation("ReviewsGiven")
   reviewsReceived Review[]       @relation("ReviewsReceived")
@@ -100,6 +101,20 @@ model User {
   @@index([email])
   @@index([phone])
   @@index([role])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+  @@index([userId])
+  @@index([listingId])
 }
 
 // Modèles standard NextAuth / Prisma Adapter
@@ -234,6 +249,7 @@ model Listing {
   auction       Auction?
   conversations Conversation[]
   payment       Payment?
+  favorites     Favorite[]
 
   @@index([userId])
   @@index([categoryId])
