@@ -68,9 +68,10 @@ export default function EleveursPage() {
   const loadMore = () => setPage(prev => prev + 1);
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-[#FAFAF5] min-h-screen">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-[#2D6A4F] mb-4 md:mb-0">Annuaire des Éleveurs</h1>
+    <div className="w-full min-h-[calc(100vh-80px)] bg-[#2D6A4F] pb-12">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-4 md:mb-0">Annuaire des Éleveurs</h1>
         
         <div className="relative w-full md:w-80">
           <input 
@@ -79,15 +80,15 @@ export default function EleveursPage() {
             placeholder="Rechercher par nom ou ville..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-[#2D6A4F] focus:ring-1 focus:ring-[#2D6A4F]"
+            className="w-full pl-10 pr-4 py-2 rounded-full border border-transparent bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-white focus:ring-1 focus:ring-white"
           />
-          <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-2.5 text-white/50 w-5 h-5" />
         </div>
       </div>
 
       {loading && page === 1 ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-10 h-10 animate-spin text-[#2D6A4F]" />
+          <Loader2 className="w-10 h-10 animate-spin text-white" />
         </div>
       ) : eleveurs.length > 0 ? (
         <>
@@ -134,7 +135,7 @@ export default function EleveursPage() {
               <button 
                 onClick={loadMore}
                 disabled={loading}
-                className="inline-flex items-center px-6 py-3 border border-[#2D6A4F] text-[#2D6A4F] font-medium rounded-lg hover:bg-[#2D6A4F] hover:text-white transition-colors disabled:opacity-50"
+                className="inline-flex items-center px-6 py-3 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-[#2D6A4F] transition-colors disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : 'Voir plus d\'éleveurs'}
               </button>
@@ -142,12 +143,13 @@ export default function EleveursPage() {
           )}
         </>
       ) : (
-        <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
-          <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-900">Aucun éleveur trouvé</h3>
-          <p className="text-gray-500 mt-2">Essayez de modifier vos critères de recherche.</p>
+        <div className="bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-sm border border-white/20 text-center py-16">
+          <User className="w-16 h-16 text-white/50 mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-white mb-2">Aucun éleveur trouvé</h3>
+          <p className="text-white/70">Essayez de modifier vos critères de recherche.</p>
         </div>
       )}
+      </div>
     </div>
   );
 }
