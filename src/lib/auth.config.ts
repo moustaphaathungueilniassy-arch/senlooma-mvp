@@ -8,6 +8,7 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
+      const userRole = (auth?.user as any)?.role;
       
       // Routes totalement publiques
       const isRoot = nextUrl.pathname === '/';
@@ -20,7 +21,7 @@ export const authConfig: NextAuthConfig = {
         return nextUrl.pathname.startsWith(route)
       });
       
-      const publicApiRoutes = ['/api/auth', '/api/paiement/webhook', '/api/annonces', '/api/eleveurs', '/api/upload'];
+      const publicApiRoutes = ['/api/auth', '/api/paiement/webhook', '/api/annonces', '/api/eleveurs'];
       const isPublicApiRoute = publicApiRoutes.some(route => nextUrl.pathname.startsWith(route));
       
       // Laisse passer les assets, images, etc.
@@ -38,8 +39,15 @@ export const authConfig: NextAuthConfig = {
       // La page d'accueil (landing) reste visible pour attirer les gens
       if (isRoot) return true;
       
-      // TOUTES les autres pages (annonces, eleveurs, tableau-de-bord, abonnement, API...) nécessitent d'être connecté
+      // TOUTES les autres pages nécessitent d'être connecté
       if (!isLoggedIn) return false;
+
+      // Protection des routes /admin — réservées aux ADMIN uniquement
+      if (nextUrl.pathname.startsWith('/admin')) {
+        if (userRole !== 'ADMIN') {
+          return Response.redirect(new URL('/annonces', nextUrl));
+        }
+      }
       
       return true;
     },

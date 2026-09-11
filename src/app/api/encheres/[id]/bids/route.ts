@@ -100,7 +100,7 @@ export async function POST(
   } catch (error: any) {
     console.error('Erreur lors du placement de l\'enchère:', error);
     return NextResponse.json(
-      { error: error.message || 'Erreur lors du placement de l\'enchère' },
+      { error: "Erreur lors du placement de l'enchère" },
       { status: 500 }
     );
   }

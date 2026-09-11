@@ -31,13 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    let finalRole = role as 'ACHETEUR' | 'ELEVEUR' | 'ADMIN';
-
-    // Limiter les admins à 2 : Les deux premiers inscrits sur la plateforme deviennent ADMIN
-    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
-    if (adminCount < 2) {
-      finalRole = 'ADMIN';
-    }
+    let finalRole = role as 'ACHETEUR' | 'ELEVEUR';
 
     // Vérifier si l'email existe déjà
     const existingUser = await prisma.user.findUnique({
