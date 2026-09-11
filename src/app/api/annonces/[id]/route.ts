@@ -120,7 +120,7 @@ export async function PUT(
   } catch (error: any) {
     console.error("Erreur lors de la modification de l'annonce:", error);
     return NextResponse.json(
-      { error: 'Erreur lors de la modification', details: error.message },
+      { error: 'Erreur lors de la modification' },
       { status: 400 }
     );
   }

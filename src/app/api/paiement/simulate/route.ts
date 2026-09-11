@@ -1,8 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+
+// ⚠️ Cette route est UNIQUEMENT pour le développement local
+// Elle est automatiquement désactivée en production (Vercel)
 
 export async function GET(request: NextRequest) {
+  // Bloquer en production
+  if (process.env.VERCEL === '1' || process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Cette route est désactivée en production.' },
+      { status: 403 }
+    );
+  }
+
   try {
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+
     const { searchParams } = new URL(request.url);
     const paymentId = searchParams.get('paymentId');
 
@@ -18,26 +31,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Paiement introuvable' }, { status: 404 });
     }
 
-    // Marquer le paiement comme SUCCESS
     await prisma.payment.update({
       where: { id: paymentId },
       data: { status: 'SUCCESS' }
     });
 
-    // Si le paiement est lié à une annonce, on l'active
     if (payment.listingId) {
       await prisma.listing.update({
         where: { id: payment.listingId },
         data: { status: 'ACTIVE' }
       });
-      
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-      return NextResponse.redirect(`${appUrl}/annonces/${payment.listingId}?payment=success`);
     }
 
-    return NextResponse.json({ message: 'Paiement simulé avec succès' });
-  } catch (error: any) {
-    console.error('Erreur lors de la simulation du paiement:', error);
-    return NextResponse.json({ error: 'Erreur interne', details: error.message }, { status: 500 });
+    await prisma.$disconnect();
+    return NextResponse.json({ message: 'Paiement simulé avec succès (DEV ONLY)' });
+  } catch (error) {
+    console.error('Erreur simulation:', error);
+    return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
   }
 }

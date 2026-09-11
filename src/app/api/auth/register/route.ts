@@ -147,12 +147,11 @@ export async function POST(request: Request) {
       );
     }
     
-    // Log the error to a file so we can inspect it locally
-    const fs = require('fs');
-    fs.appendFileSync('register_error_log.txt', new Date().toISOString() + ' - ' + (error?.message || String(error)) + '\n');
+    // Log the error server-side only
+    console.error('Registration error details:', error?.message || String(error));
 
     return NextResponse.json(
-      { message: 'Une erreur est survenue lors de la création du compte', details: error?.message || String(error) },
+      { message: 'Une erreur est survenue lors de la création du compte' },
       { status: 500 }
     );
   }

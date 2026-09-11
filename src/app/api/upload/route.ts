@@ -78,6 +78,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: (uploadResponse as any).secure_url }, { status: 200 });
   } catch (error: any) {
     console.error('Erreur lors du téléchargement:', error);
-    return NextResponse.json({ error: 'Erreur lors du téléchargement', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Erreur lors du téléchargement' }, { status: 500 });
   }
 }

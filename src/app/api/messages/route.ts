@@ -21,6 +21,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message vide' }, { status: 400 });
     }
 
+    // Limiter la taille du message
+    if (content && typeof content === 'string' && content.length > 2000) {
+      return NextResponse.json({ error: 'Message trop long (max 2000 caractères)' }, { status: 400 });
+    }
+
     // Vérifier que l'utilisateur participe à la conversation
     const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId }

@@ -1,14 +1,28 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyOTP } from '@/lib/security';
+import { verifyOTP, checkRateLimit, getClientIp } from '@/lib/security';
 
 export async function POST(request: Request) {
   try {
+    // Rate limit: max 5 tentatives par IP par 15 minutes
+    const ip = getClientIp(request);
+    if (!checkRateLimit(`otp:${ip}`, 5, 15 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: 'Trop de tentatives. Veuillez réessayer dans 15 minutes.' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { email, code } = body;
 
     if (!email || !code) {
       return NextResponse.json({ error: 'Adresse e-mail ou code manquant.' }, { status: 400 });
+    }
+
+    // Validation basique
+    if (typeof code !== 'string' || code.length !== 6 || !/^\d{6}$/.test(code)) {
+      return NextResponse.json({ error: 'Format de code invalide.' }, { status: 400 });
     }
 
     const isValid = verifyOTP(email, code);

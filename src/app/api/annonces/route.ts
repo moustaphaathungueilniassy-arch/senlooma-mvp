@@ -18,6 +18,7 @@ export async function GET(request: Request) {
     let limit = parseInt(searchParams.get('limit') || '10');
     if (isNaN(page) || page < 1) page = 1;
     if (isNaN(limit) || limit < 1) limit = 10;
+    if (limit > 50) limit = 50; // Protection anti-DoS
 
     // Les annonces expirent automatiquement après 15 jours
     const fifteenDaysAgo = new Date();
@@ -144,8 +145,6 @@ export async function POST(request: Request) {
       );
     }
     console.error("Erreur lors de la création de l'annonce:", error);
-    const fs = require('fs');
-    fs.appendFileSync('annonce_error_log.txt', new Date().toISOString() + ' - ' + (error?.message || String(error)) + '\n');
-    return NextResponse.json({ error: "Erreur lors de la création de l'annonce", details: error.message }, { status: 400 });
+    return NextResponse.json({ error: "Erreur lors de la création de l'annonce" }, { status: 400 });
   }
 }
