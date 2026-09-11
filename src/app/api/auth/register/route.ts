@@ -23,12 +23,20 @@ export async function POST(request: Request) {
     // Normaliser l'email
     email = email.toLowerCase().trim();
 
-    // Forcer le rôle, interdire ADMIN
+    // Forcer le rôle, interdire ADMIN explicitement de la requête client
     if (role !== 'ACHETEUR' && role !== 'ELEVEUR') {
       return NextResponse.json(
         { message: 'Rôle invalide' },
         { status: 400 }
       );
+    }
+
+    let finalRole = role as 'ACHETEUR' | 'ELEVEUR' | 'ADMIN';
+
+    // Limiter les admins à 2 : Les deux premiers inscrits sur la plateforme deviennent ADMIN
+    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
+    if (adminCount < 2) {
+      finalRole = 'ADMIN';
     }
 
     // Vérifier si l'email existe déjà
@@ -53,7 +61,7 @@ export async function POST(request: Request) {
         email,
         phone: phone || null,
         passwordHash,
-        role: role as 'ACHETEUR' | 'ELEVEUR',
+        role: finalRole,
         idCardNumber: idCardNumber || null,
         idCardFront: idCardFront || null,
         idCardBack: idCardBack || null,
