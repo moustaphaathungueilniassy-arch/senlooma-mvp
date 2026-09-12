@@ -116,7 +116,12 @@ export default function NouvelleAnnoncePage() {
           const resData = await uploadRes.json();
           return resData.url;
         }
-        throw new Error('Erreur lors de l\'upload d\'une image');
+        let errorMsg = 'Erreur lors de l\'upload d\'une image';
+        try {
+          const errData = await uploadRes.json();
+          if (errData.error) errorMsg = errData.error;
+        } catch (e) {}
+        throw new Error(errorMsg);
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
