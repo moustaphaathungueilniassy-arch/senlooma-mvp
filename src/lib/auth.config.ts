@@ -21,7 +21,7 @@ export const authConfig: NextAuthConfig = {
         return nextUrl.pathname.startsWith(route)
       });
       
-      const publicApiRoutes = ['/api/auth', '/api/paiement/webhook', '/api/annonces', '/api/eleveurs'];
+      const publicApiRoutes = ['/api/auth', '/api/paiement/webhook', '/api/annonces', '/api/eleveurs', '/api/upload'];
       const isPublicApiRoute = publicApiRoutes.some(route => nextUrl.pathname.startsWith(route));
       
       // Laisse passer les assets, images, etc.
