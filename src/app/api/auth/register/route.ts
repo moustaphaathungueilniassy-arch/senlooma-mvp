@@ -91,7 +91,7 @@ export async function POST(request: Request) {
 
     // 2. Générer l'OTP et simuler l'envoi
     if (user.email) {
-      generateOTP(user.email);
+      await generateOTP(user.email);
     }
 
     // Enlever le hash du mot de passe de la réponse

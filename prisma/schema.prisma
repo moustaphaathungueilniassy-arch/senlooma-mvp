@@ -156,6 +156,17 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model OtpCode {
+  id         String   @id @default(cuid())
+  identifier String   @unique
+  code       String
+  attempts   Int      @default(0)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([identifier])
+}
+
 // ==========================================
 // 2. ABONNEMENTS & PAIEMENTS
 // ==========================================

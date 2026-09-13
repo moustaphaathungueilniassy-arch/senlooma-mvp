@@ -25,7 +25,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Format de code invalide.' }, { status: 400 });
     }
 
-    const isValid = verifyOTP(email, code);
+    // 3. Vérifier le code
+    const isValid = await verifyOTP(email, code);
     
     if (!isValid) {
       return NextResponse.json({ error: 'Code incorrect ou expiré.' }, { status: 400 });

@@ -41,22 +41,34 @@ export function getClientIp(req: Request): string {
 }
 
 // ==========================================
-// OTP — Stockage en mémoire (dev) / BDD (prod)
+// OTP — Stockage en base de données (Prisma)
 // Utilise crypto.randomInt pour la sécurité cryptographique
 // ==========================================
 
-const otpCache = new Map<string, { code: string; expiresAt: number; attempts: number }>();
+import prisma from './prisma';
 
 /**
- * Génère un code OTP à 6 chiffres cryptographiquement sûr
+ * Génère un code OTP à 6 chiffres cryptographiquement sûr et l'enregistre en BDD
  */
-export function generateOTP(identifier: string): string {
+export async function generateOTP(identifier: string): Promise<string> {
   // 6 chiffres pour 1 million de possibilités
   const code = crypto.randomInt(100000, 999999).toString();
-  otpCache.set(identifier, {
-    code,
-    expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
-    attempts: 0,
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+  await prisma.otpCode.upsert({
+    where: { identifier },
+    update: {
+      code,
+      expiresAt,
+      attempts: 0,
+      createdAt: new Date(),
+    },
+    create: {
+      identifier,
+      code,
+      expiresAt,
+      attempts: 0,
+    },
   });
 
   // Log uniquement en développement — JAMAIS en production
@@ -72,26 +84,33 @@ export function generateOTP(identifier: string): string {
 /**
  * Vérifie un code OTP avec protection anti-brute-force (max 5 tentatives)
  */
-export function verifyOTP(identifier: string, code: string): boolean {
-  const record = otpCache.get(identifier);
+export async function verifyOTP(identifier: string, code: string): Promise<boolean> {
+  const record = await prisma.otpCode.findUnique({
+    where: { identifier },
+  });
+
   if (!record) return false;
 
   // Vérifier l'expiration
-  if (Date.now() > record.expiresAt) {
-    otpCache.delete(identifier);
+  if (Date.now() > record.expiresAt.getTime()) {
+    await prisma.otpCode.delete({ where: { identifier } });
     return false;
   }
 
   // Protection anti-brute-force : max 5 tentatives
   if (record.attempts >= 5) {
-    otpCache.delete(identifier);
+    await prisma.otpCode.delete({ where: { identifier } });
     return false;
   }
 
-  record.attempts++;
+  // Incrémenter les tentatives
+  await prisma.otpCode.update({
+    where: { identifier },
+    data: { attempts: record.attempts + 1 },
+  });
 
   if (record.code === code) {
-    otpCache.delete(identifier);
+    await prisma.otpCode.delete({ where: { identifier } });
     return true;
   }
 
