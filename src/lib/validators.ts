@@ -88,7 +88,9 @@ export const listingSchema = z.object({
   longitude: z.number().optional(),
   country: z.string().optional().or(z.literal('')),
   city: z.string().min(1, 'Veuillez indiquer la localisation de l\'animal'),
-  images: z.array(z.string()).optional(),
+  images: z.array(z.string().url('URL invalide').refine((url) => {
+    return url.includes('res.cloudinary.com') || url.startsWith('/uploads/');
+  }, "URL d'image non autorisée.")).optional(),
 });
 
 // ==========================================
