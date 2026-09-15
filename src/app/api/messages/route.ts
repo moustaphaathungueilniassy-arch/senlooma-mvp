@@ -56,6 +56,32 @@ export async function POST(request: Request) {
       data: { lastMessageAt: new Date() }
     });
 
+    // --- NOTIFICATION EMAIL ---
+    try {
+      const recipientId = conversation.participant1Id === userId ? conversation.participant2Id : conversation.participant1Id;
+      const recipient = await prisma.user.findUnique({
+        where: { id: recipientId },
+        select: { email: true, name: true, role: true }
+      });
+
+      // Si le destinataire a un email et que la clé Resend est configurée
+      if (recipient?.email && process.env.RESEND_API_KEY) {
+        const { sendNotificationEmail } = await import('@/lib/email');
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://senlooma-mvp-silk.vercel.app';
+        
+        await sendNotificationEmail({
+          to: recipient.email,
+          title: 'Vous avez reçu un nouveau message sur SAMA-DARAAL',
+          message: `Bonjour ${recipient.name || 'Cher membre'},\n\nVous avez reçu un nouveau message de la part de ${message.sender?.name || 'un utilisateur'}. Cliquez sur le bouton ci-dessous pour lui répondre et conclure la vente !`,
+          ctaText: 'Voir le message',
+          ctaUrl: `${baseUrl}/messages`
+        });
+      }
+    } catch (emailError) {
+      console.error('Erreur non bloquante lors de la notification email:', emailError);
+    }
+    // ---------------------------
+
     return NextResponse.json(message);
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error);
