@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { LayoutDashboard, FileText, MessageSquare, User, CreditCard, Settings, Heart, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, User, CreditCard, Settings, Heart, ShoppingBag, ShieldCheck } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,6 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (role === 'ELEVEUR') {
       baseNav.push(
         { name: 'Mes Annonces', href: '/tableau-de-bord/annonces', icon: FileText },
+        { name: 'Vérification', href: '/tableau-de-bord/verification', icon: ShieldCheck },
         { name: 'Abonnement', href: '/abonnement', icon: CreditCard }
       );
     } else {

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import Link from 'next/link';
-import { LayoutDashboard, Users, FileText, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, ShieldCheck } from 'lucide-react';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -28,6 +28,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </Link>
           <Link href="/admin/utilisateurs" className="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
             <Users className="w-5 h-5 mr-3" /> Utilisateurs
+          </Link>
+          <Link href="/admin/verifications" className="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
+            <ShieldCheck className="w-5 h-5 mr-3" /> Vérifications KYC
           </Link>
           <Link href="/admin/annonces" className="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
             <FileText className="w-5 h-5 mr-3" /> Annonces
