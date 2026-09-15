@@ -40,18 +40,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Toutes les informations sont requises.' }, { status: 400 });
     }
 
-    // Mettre à jour l'utilisateur
+    // Mettre à jour l'utilisateur et l'approuver AUTOMATIQUEMENT
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
         idCardNumber,
         idCardFront,
         idCardBack,
-        verified: false, // Repasse à false au cas où il était vérifié et a changé sa carte
+        verified: true, // Auto-approbation activée comme demandé
       }
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, verified: true });
   } catch (error) {
     console.error('Erreur POST /api/user/verify-request:', error);
     return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
