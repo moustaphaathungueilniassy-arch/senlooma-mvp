@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   try {
     // 1. Anti-Spam: Limiter à 5 créations de compte par heure par adresse IP
     const ip = getClientIp(request);
-    const isAllowed = checkRateLimit(ip, 5, 60 * 60 * 1000); // 5 requêtes / heure
+    const isAllowed = await checkRateLimit(ip, 5, 60 * 60 * 1000); // 5 requêtes / heure
     if (!isAllowed) {
       return NextResponse.json({ message: 'Trop de requêtes. Veuillez réessayer plus tard.' }, { status: 429 });
     }

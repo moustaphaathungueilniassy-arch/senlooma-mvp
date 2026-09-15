@@ -58,7 +58,7 @@ export default async function AdminUtilisateursPage() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{u.name || 'Sans nom'}</p>
-                        <p className="text-xs text-gray-500">{u.city || u.location || 'Localisation inconnue'}</p>
+                        <p className="text-xs text-gray-500">{u.location || 'Localisation inconnue'}</p>
                       </div>
                     </div>
                   </td>

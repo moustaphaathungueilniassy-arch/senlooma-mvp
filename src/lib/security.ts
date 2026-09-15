@@ -5,12 +5,40 @@ import crypto from 'crypto';
 // En production sur Vercel, utiliser Redis/Upstash
 // ==========================================
 
+import { Redis } from '@upstash/redis';
+
+// Initialisation de Redis (ne plantera pas si les clés ne sont pas définies en dev)
+const redis = process.env.UPSTASH_REDIS_REST_URL
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    })
+  : null;
+
 const rateLimitCache = new Map<string, { count: number; expiresAt: number }>();
 
-export function checkRateLimit(ip: string, limit: number, windowMs: number): boolean {
+export async function checkRateLimit(ip: string, limit: number, windowMs: number): Promise<boolean> {
   const now = Date.now();
 
-  // Nettoyer les entrées expirées
+  // Mode Vercel/Prod : Utiliser Redis si configuré
+  if (redis) {
+    try {
+      const key = `ratelimit:${ip}`;
+      // LUA Script basique ou juste incr/expire
+      const current = await redis.incr(key);
+      if (current === 1) {
+        // Première requête, définir l'expiration (en secondes)
+        await redis.expire(key, Math.floor(windowMs / 1000));
+      }
+      return current <= limit;
+    } catch (e) {
+      console.error('Erreur Redis Rate Limiting:', e);
+      // Fallback permissif en cas de panne Redis
+      return true;
+    }
+  }
+
+  // Fallback Dev : Mémoire locale
   for (const [key, val] of rateLimitCache.entries()) {
     if (val.expiresAt < now) {
       rateLimitCache.delete(key);
@@ -18,7 +46,6 @@ export function checkRateLimit(ip: string, limit: number, windowMs: number): boo
   }
 
   const record = rateLimitCache.get(ip);
-
   if (!record || record.expiresAt < now) {
     rateLimitCache.set(ip, { count: 1, expiresAt: now + windowMs });
     return true;

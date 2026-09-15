@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   try {
     // Rate limit: max 5 tentatives par IP par 15 minutes
     const ip = getClientIp(request);
-    if (!checkRateLimit(`otp:${ip}`, 5, 15 * 60 * 1000)) {
+    if (!(await checkRateLimit(`otp:${ip}`, 5, 15 * 60 * 1000))) {
       return NextResponse.json(
         { error: 'Trop de tentatives. Veuillez réessayer dans 15 minutes.' },
         { status: 429 }

@@ -8,10 +8,26 @@ import Providers from '@/components/Providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'SAMA-DARAAL - Marketplace de Bétail au Sénégal',
+  title: {
+    default: 'SAMA-DARAAL - Marketplace de Bétail au Sénégal',
+    template: '%s | SAMA-DARAAL'
+  },
   description: 'La première plateforme dédiée à la vente et l\'achat de bétail au Sénégal. Connectez-vous avec des éleveurs certifiés, participez aux enchères et géolocalisez les offres.',
   manifest: '/manifest.json',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://senlooma-mvp-silk.vercel.app'),
+  openGraph: {
+    title: 'SAMA-DARAAL - Marketplace de Bétail',
+    description: 'Achetez et vendez du bétail de qualité en toute sécurité.',
+    url: 'https://senlooma-mvp-silk.vercel.app',
+    siteName: 'SAMA-DARAAL',
+    locale: 'fr_SN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SAMA-DARAAL - Marketplace de Bétail',
+    description: 'Achetez et vendez du bétail de qualité en toute sécurité.',
+  },
 };
 
 export default function RootLayout({
