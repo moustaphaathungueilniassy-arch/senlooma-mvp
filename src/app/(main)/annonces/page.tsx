@@ -30,6 +30,11 @@ function AnnoncesContent() {
     categoryId: searchParams?.get('categoryId') || '',
     minPrice: searchParams?.get('minPrice') || '',
     maxPrice: searchParams?.get('maxPrice') || '',
+    minWeight: searchParams?.get('minWeight') || '',
+    maxWeight: searchParams?.get('maxWeight') || '',
+    minAge: searchParams?.get('minAge') || '',
+    maxAge: searchParams?.get('maxAge') || '',
+    sex: searchParams?.get('sex') || '',
     city: searchParams?.get('city') || '',
     search: searchParams?.get('search') || '',
     breed: searchParams?.get('breed') || ''
@@ -54,10 +59,18 @@ function AnnoncesContent() {
       if (debouncedFilters.categoryId) queryParams.set('categoryId', debouncedFilters.categoryId);
       if (debouncedFilters.minPrice) queryParams.set('minPrice', debouncedFilters.minPrice);
       if (debouncedFilters.maxPrice) queryParams.set('maxPrice', debouncedFilters.maxPrice);
+      if (debouncedFilters.minWeight) queryParams.set('minWeight', debouncedFilters.minWeight);
+      if (debouncedFilters.maxWeight) queryParams.set('maxWeight', debouncedFilters.maxWeight);
+      if (debouncedFilters.minAge) queryParams.set('minAge', debouncedFilters.minAge);
+      if (debouncedFilters.maxAge) queryParams.set('maxAge', debouncedFilters.maxAge);
+      if (debouncedFilters.sex) queryParams.set('sex', debouncedFilters.sex);
       if (debouncedFilters.city) queryParams.set('city', debouncedFilters.city);
       if (debouncedFilters.search) queryParams.set('search', debouncedFilters.search);
       if (debouncedFilters.breed) queryParams.set('breed', debouncedFilters.breed);
       
+      // Update URL
+      router.replace(`?${queryParams.toString()}`, { scroll: false });
+
       const res = await fetch(`/api/annonces?${queryParams.toString()}`);
       if (!res.ok) throw new Error('Erreur réseau');
       
@@ -167,59 +180,132 @@ function AnnoncesContent() {
                   name="search" 
                   value={filters.search}
                   onChange={handleFilterChange}
-                  placeholder="Rechercher une annonce..."
-                  className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50 mb-4"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="minPrice" className="block text-sm font-medium text-white/90 mb-1">Prix Min (FCFA)</label>
-                <input 
-                  id="minPrice"
-                  type="number" 
-                  name="minPrice" 
-                  value={filters.minPrice}
-                  onChange={handleFilterChange}
+                  placeholder="Rechercher..."
                   className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
                 />
               </div>
 
               <div>
-                <label htmlFor="maxPrice" className="block text-sm font-medium text-white/90 mb-1">Prix Max (FCFA)</label>
-                <input 
-                  id="maxPrice"
-                  type="number" 
-                  name="maxPrice" 
-                  value={filters.maxPrice}
-                  onChange={handleFilterChange}
-                  className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="breed" className="block text-sm font-medium text-white/90 mb-1">Race</label>
-                <input 
-                  id="breed"
-                  type="text" 
-                  name="breed" 
-                  value={filters.breed}
-                  onChange={handleFilterChange}
-                  placeholder="Ex: Ladoum, Azawak..."
-                  className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-white/90 mb-1">Ville</label>
-                <input 
-                  id="city"
-                  type="text" 
-                  name="city" 
+                <label className="block text-sm font-medium text-white/90 mb-1">Ville / Région</label>
+                <select
+                  name="city"
                   value={filters.city}
                   onChange={handleFilterChange}
-                  placeholder="Ex: Dakar, Thiès..."
-                  className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
-                />
+                  className="w-full bg-white/10 border-white/20 text-white rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50 [&>option]:text-gray-900"
+                >
+                  <option value="">Toutes les régions</option>
+                  <option value="Dakar">Dakar</option>
+                  <option value="Thiès">Thiès</option>
+                  <option value="Touba">Touba</option>
+                  <option value="Saint-Louis">Saint-Louis</option>
+                  <option value="Diourbel">Diourbel</option>
+                  <option value="Kaolack">Kaolack</option>
+                  <option value="Ziguinchor">Ziguinchor</option>
+                  <option value="Fatick">Fatick</option>
+                  <option value="Kolda">Kolda</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1">Race</label>
+                <select
+                  name="breed"
+                  value={filters.breed}
+                  onChange={handleFilterChange}
+                  className="w-full bg-white/10 border-white/20 text-white rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50 [&>option]:text-gray-900"
+                >
+                  <option value="">Toutes les races</option>
+                  <option value="Ladoum">Ladoum</option>
+                  <option value="Bali-Bali">Bali-Bali</option>
+                  <option value="Touabire">Touabire</option>
+                  <option value="Azawak">Azawak</option>
+                  <option value="Guzerat">Guzerat</option>
+                  <option value="Peulh">Peulh</option>
+                  <option value="Local">Local</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1">Sexe</label>
+                <select
+                  name="sex"
+                  value={filters.sex}
+                  onChange={handleFilterChange}
+                  className="w-full bg-white/10 border-white/20 text-white rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50 [&>option]:text-gray-900"
+                >
+                  <option value="">Tous</option>
+                  <option value="MALE">Mâle</option>
+                  <option value="FEMELLE">Femelle</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1">Prix Min</label>
+                  <input 
+                    type="number" 
+                    name="minPrice" 
+                    value={filters.minPrice}
+                    onChange={handleFilterChange}
+                    className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1">Prix Max</label>
+                  <input 
+                    type="number" 
+                    name="maxPrice" 
+                    value={filters.maxPrice}
+                    onChange={handleFilterChange}
+                    className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1">Poids Min (kg)</label>
+                  <input 
+                    type="number" 
+                    name="minWeight" 
+                    value={filters.minWeight}
+                    onChange={handleFilterChange}
+                    className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1">Poids Max (kg)</label>
+                  <input 
+                    type="number" 
+                    name="maxWeight" 
+                    value={filters.maxWeight}
+                    onChange={handleFilterChange}
+                    className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1">Âge Min (mois)</label>
+                  <input 
+                    type="number" 
+                    name="minAge" 
+                    value={filters.minAge}
+                    onChange={handleFilterChange}
+                    className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1">Âge Max</label>
+                  <input 
+                    type="number" 
+                    name="maxAge" 
+                    value={filters.maxAge}
+                    onChange={handleFilterChange}
+                    className="w-full bg-white/10 border-white/20 text-white placeholder-white/50 rounded-md shadow-sm focus:border-white focus:ring focus:ring-white focus:ring-opacity-50"
+                  />
+                </div>
               </div>
             </div>
           </div>

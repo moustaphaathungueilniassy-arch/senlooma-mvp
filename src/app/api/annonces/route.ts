@@ -10,6 +10,11 @@ export async function GET(request: Request) {
     const categoryId = searchParams.get('categoryId');
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
+    const minWeight = searchParams.get('minWeight');
+    const maxWeight = searchParams.get('maxWeight');
+    const minAge = searchParams.get('minAge');
+    const maxAge = searchParams.get('maxAge');
+    const sex = searchParams.get('sex');
     const breed = searchParams.get('breed');
     const city = searchParams.get('city');
     const search = searchParams.get('search');
@@ -32,13 +37,32 @@ export async function GET(request: Request) {
     };
 
     if (categoryId) where.categoryId = categoryId;
-    if (minPrice) where.price = { ...where.price, gte: parseFloat(minPrice) };
-    if (maxPrice) where.price = { ...where.price, lte: parseFloat(maxPrice) };
-    if (breed) where.breed = { contains: breed, mode: 'insensitive' };
     
-    if (city) {
-      where.city = { contains: city, mode: 'insensitive' };
+    // Filtres numériques (Prix)
+    if (minPrice || maxPrice) {
+      where.price = {};
+      if (minPrice) where.price.gte = parseFloat(minPrice);
+      if (maxPrice) where.price.lte = parseFloat(maxPrice);
     }
+
+    // Filtres numériques (Poids)
+    if (minWeight || maxWeight) {
+      where.weight = {};
+      if (minWeight) where.weight.gte = parseFloat(minWeight);
+      if (maxWeight) where.weight.lte = parseFloat(maxWeight);
+    }
+
+    // Filtres numériques (Âge en mois)
+    if (minAge || maxAge) {
+      where.age = {};
+      if (minAge) where.age.gte = parseInt(minAge);
+      if (maxAge) where.age.lte = parseInt(maxAge);
+    }
+
+    // Filtres exacts ou partiels
+    if (sex) where.sex = sex;
+    if (breed && breed !== 'Toutes') where.breed = { contains: breed, mode: 'insensitive' };
+    if (city && city !== 'Toutes') where.city = { contains: city, mode: 'insensitive' };
     
     if (search) {
       where.title = { contains: search, mode: 'insensitive' };
