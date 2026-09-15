@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { ShieldCheck, Check, X, Search, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export default function AdminVerificationsPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -104,19 +103,18 @@ export default function AdminVerificationsPage() {
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
+                      <button
                         onClick={() => handleVerify(u.id, 'APPROVE')}
-                        className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1 h-8"
+                        className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1 h-8 px-3 rounded-md text-sm font-medium transition-colors"
                       >
                         <Check className="w-4 h-4" /> Approuver
-                      </Button>
-                      <Button
+                      </button>
+                      <button
                         onClick={() => handleVerify(u.id, 'REJECT')}
-                        variant="destructive"
-                        className="flex items-center gap-1 h-8"
+                        className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-1 h-8 px-3 rounded-md text-sm font-medium transition-colors"
                       >
                         <X className="w-4 h-4" /> Rejeter
-                      </Button>
+                      </button>
                     </div>
                   </td>
                 </tr>
