@@ -73,8 +73,14 @@ export default function VerificationPage() {
       });
 
       if (res.ok) {
-        setMessage({ type: 'success', text: 'Vos documents ont été soumis avec succès. Un administrateur va les examiner.' });
-        setStatus(prev => ({ ...prev, idCardNumber: formData.idCardNumber, idCardFront: formData.idCardFront[0], idCardBack: formData.idCardBack[0] }));
+        setMessage({ type: 'success', text: 'Vos documents ont été soumis. Vous êtes maintenant Vérifié !' });
+        setStatus(prev => ({ 
+          ...prev, 
+          idCardNumber: formData.idCardNumber, 
+          idCardFront: formData.idCardFront[0], 
+          idCardBack: formData.idCardBack[0],
+          verified: true 
+        }));
       } else {
         const errorData = await res.json();
         setMessage({ type: 'error', text: errorData.error || 'Une erreur est survenue.' });
