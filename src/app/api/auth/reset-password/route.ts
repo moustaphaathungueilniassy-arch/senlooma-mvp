@@ -14,17 +14,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Le mot de passe doit contenir au moins 6 caractères.' }, { status: 400 });
     }
 
-    // Vérifier le token
-    const resetToken = await prisma.passwordResetToken.findUnique({
-      where: { token },
+    // Vérifier le token dans OtpCode
+    const resetToken = await prisma.otpCode.findFirst({
+      where: { code: token },
     });
 
     if (!resetToken) {
-      return NextResponse.json({ error: 'Lien de réinitialisation invalide.' }, { status: 400 });
-    }
-
-    if (resetToken.used) {
-      return NextResponse.json({ error: 'Ce lien a déjà été utilisé.' }, { status: 400 });
+      return NextResponse.json({ error: 'Lien de réinitialisation invalide ou expiré.' }, { status: 400 });
     }
 
     if (new Date() > resetToken.expiresAt) {
@@ -36,14 +32,13 @@ export async function POST(request: Request) {
 
     // Mettre à jour le mot de passe de l'utilisateur
     await prisma.user.update({
-      where: { email: resetToken.email },
+      where: { email: resetToken.identifier },
       data: { passwordHash: hashedPassword },
     });
 
-    // Marquer le token comme utilisé
-    await prisma.passwordResetToken.update({
+    // Supprimer le token pour qu'il ne puisse plus être utilisé
+    await prisma.otpCode.delete({
       where: { id: resetToken.id },
-      data: { used: true },
     });
 
     return NextResponse.json({ message: 'Mot de passe réinitialisé avec succès.' });

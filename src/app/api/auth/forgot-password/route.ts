@@ -29,17 +29,16 @@ export async function POST(request: Request) {
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 heure
 
-    // Invalider les anciens tokens pour cet email
-    await prisma.passwordResetToken.updateMany({
-      where: { email: normalizedEmail, used: false },
-      data: { used: true },
+    // Invalider les anciens tokens pour cet email (on supprime simplement s'il y en a)
+    await prisma.otpCode.deleteMany({
+      where: { identifier: normalizedEmail },
     });
 
-    // Créer le nouveau token
-    await prisma.passwordResetToken.create({
+    // Créer le nouveau token dans OtpCode
+    await prisma.otpCode.create({
       data: {
-        token,
-        email: normalizedEmail,
+        code: token,
+        identifier: normalizedEmail,
         expiresAt,
       },
     });
