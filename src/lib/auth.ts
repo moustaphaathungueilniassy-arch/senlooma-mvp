@@ -21,7 +21,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email as string,
+            email: (credentials.email as string).toLowerCase().trim(),
           },
         });
 
@@ -38,10 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // Vérifier que l'email a été confirmé
-        if (!user.verified) {
-          throw new Error('EMAIL_NOT_VERIFIED');
-        }
+
 
         return {
           id: user.id,
