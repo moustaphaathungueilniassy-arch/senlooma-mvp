@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     // Le code est bon, on met à jour le statut "verified"
     await prisma.user.update({
       where: { email },
-      data: { verified: true }
+      data: { emailVerified: new Date() }
     });
 
     return NextResponse.json({ message: 'Compte vérifié avec succès.' }, { status: 200 });
