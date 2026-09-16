@@ -12,7 +12,7 @@ export const authConfig: NextAuthConfig = {
       
       // Routes totalement publiques
       const isRoot = nextUrl.pathname === '/';
-      const authRoutes = ['/connexion', '/inscription'];
+      const authRoutes = ['/connexion', '/inscription', '/mot-de-passe-oublie', '/reinitialiser-mot-de-passe'];
       const isAuthRoute = authRoutes.some(route => nextUrl.pathname.startsWith(route));
       
       const publicRoutes = ['/annonces', '/eleveurs', '/encheres'];
