@@ -111,6 +111,9 @@ function ConnexionForm() {
             <label htmlFor="password" className="block text-sm font-medium text-white">
               Mot de passe
             </label>
+            <Link href="/mot-de-passe-oublie" className="text-xs text-[#D4A843] hover:underline">
+              Mot de passe oublié ?
+            </Link>
           </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
